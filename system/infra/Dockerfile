@@ -1,6 +1,7 @@
 FROM ubuntu:24.04 AS base
-RUN apt update
-RUN apt install -y make
+RUN apt-get update
+RUN apt-get install -y make
+RUN apt-get install -y git
 
 FROM base AS go
 ENV PATH="/usr/local/go/bin:${PATH}"
