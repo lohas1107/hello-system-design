@@ -1,11 +1,11 @@
 package e2e
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/suite"
+	identity "identity/pkg"
 	"net/http"
-	"order/pkg"
+	order "order/pkg"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func (s *RateLimiterTestSuite) SetupTest() {
 
 func (s *RateLimiterTestSuite) Test_authenticated_api_request_count_below_limit() {
 	apitest.New().
-		Handler(pkg.Router()).
+		Handler(order.Router()).
 		Post("/v1/orders").
 		Expect(s.T()).
 		Status(http.StatusCreated).
@@ -32,25 +32,14 @@ func (s *RateLimiterTestSuite) Test_authenticated_api_request_count_below_limit(
 
 func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count_below_limit() {
 	apitest.New().
-		Handler(Router()).
+		Handler(identity.Router()).
 		Post("/v1/login").
 		Expect(s.T()).
 		Status(http.StatusOK).
 		End()
 }
 
-func Router() *gin.Engine {
-	engine := gin.Default()
-	v1 := engine.Group("v1")
-	v1.POST("/login")
-	return engine
-}
-
 func (s *RateLimiterTestSuite) Test_api_request_count_below_limit() {
-	s.T().Run("unauthenticated", func(t *testing.T) {
-
-	})
-
 	s.T().Run("custom", func(t *testing.T) {
 
 	})
