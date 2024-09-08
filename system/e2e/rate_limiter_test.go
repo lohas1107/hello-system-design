@@ -39,10 +39,13 @@ func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count_below_limi
 		End()
 }
 
-func (s *RateLimiterTestSuite) Test_api_request_count_below_limit() {
-	s.T().Run("custom", func(t *testing.T) {
-
-	})
+func (s *RateLimiterTestSuite) Test_custom_api_request_count_below_limit() {
+	apitest.New().
+		Handler(order.Router()).
+		Post("/v1/orders/report").
+		Expect(s.T()).
+		Status(http.StatusAccepted).
+		End()
 }
 
 func (s *RateLimiterTestSuite) Test_api_request_count_exceeds_limit() {
