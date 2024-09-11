@@ -6,12 +6,18 @@ import (
 	"testing"
 )
 
-var OrderHandler = apitest.New().Handler(pkg.Router())
-
 func CreateOrder(t *testing.T) *apitest.Response {
-	return OrderHandler.Post("/v1/orders").Expect(t)
+	return apitest.New().Debug().
+		Handler(pkg.Router()).
+		Post("/v1/orders").
+		Header("Authentication", "Bearer 123").
+		Expect(t)
 }
 
 func CreateOrderReport(t *testing.T) *apitest.Response {
-	return OrderHandler.Post("/v1/orders/report").Expect(t)
+	return apitest.New().Debug().
+		Handler(pkg.Router()).
+		Post("/v1/orders/report").
+		Header("Authentication", "Bearer 456").
+		Expect(t)
 }
