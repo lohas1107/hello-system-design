@@ -6,11 +6,11 @@ import (
 	"testing"
 )
 
-func CreateOrder(t *testing.T) *apitest.Response {
+func CreateOrder(t *testing.T, headers map[string]string) *apitest.Response {
 	return apitest.New().Debug().
 		Handler(pkg.Router()).
 		Post("/v1/orders").
-		Header("Authentication", "Bearer 123").
+		Headers(headers).
 		Expect(t)
 }
 

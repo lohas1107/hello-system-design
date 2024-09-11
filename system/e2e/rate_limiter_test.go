@@ -17,16 +17,26 @@ func TestRateLimiterTestSuite(t *testing.T) {
 }
 
 func (s *RateLimiterTestSuite) Test_authenticated_api_request_count() {
-	givenApiRequestCount(s.T(), api.CreateOrder, 4)
+	headers := map[string]string{
+		"Authentication": "Bearer 123",
+	}
+
+	s.givenCreateOrderRequestCount(s.T(), headers, 4)
 
 	s.T().Run("below limit", func(t *testing.T) {
-		response := api.CreateOrder(s.T())
+		response := api.CreateOrder(s.T(), headers)
 		s.statusShouldBe(response, http.StatusCreated)
 	})
 	s.T().Run("exceeds limit", func(t *testing.T) {
-		response := api.CreateOrder(s.T())
+		response := api.CreateOrder(s.T(), headers)
 		s.statusShouldBe(response, http.StatusTooManyRequests)
 	})
+}
+
+func (s *RateLimiterTestSuite) givenCreateOrderRequestCount(t *testing.T, headers map[string]string, count int) {
+	for range count {
+		api.CreateOrder(t, headers).End()
+	}
 }
 
 func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count_below_limit() {
@@ -39,12 +49,6 @@ func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count_below_limi
 func (s *RateLimiterTestSuite) Test_custom_api_request_count_below_limit() {
 	response := api.CreateOrderReport(s.T())
 	s.statusShouldBe(response, http.StatusAccepted)
-}
-
-func givenApiRequestCount(t *testing.T, api func(t *testing.T) *apitest.Response, count int) {
-	for range count {
-		api(t).End()
-	}
 }
 
 func (s *RateLimiterTestSuite) statusShouldBe(response *apitest.Response, status int) {

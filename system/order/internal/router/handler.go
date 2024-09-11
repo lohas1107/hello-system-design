@@ -25,7 +25,6 @@ func AuthenticatedApiRateLimiter(context *gin.Context) {
 	RateLimitMap[userID] += 1
 	if RateLimitMap[userID] > 5 {
 		context.AbortWithStatus(http.StatusTooManyRequests)
-		return
 	}
 }
 
