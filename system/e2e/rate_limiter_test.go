@@ -5,6 +5,7 @@ import (
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/suite"
 	"net/http"
+	"os"
 	"testing"
 )
 
@@ -16,11 +17,25 @@ func TestRateLimiterTestSuite(t *testing.T) {
 	suite.Run(t, new(RateLimiterTestSuite))
 }
 
-func (s *RateLimiterTestSuite) Test_authenticated_api_request_count() {
-	headers := map[string]string{
-		"Authentication": "Bearer 123",
-	}
+type HttpHeaderOption func(map[string]string)
 
+func HttpHeaders(options ...HttpHeaderOption) map[string]string {
+	headers := map[string]string{}
+	for _, option := range options {
+		option(headers)
+	}
+	return headers
+}
+
+func BearerToken(token string) HttpHeaderOption {
+	return func(headers map[string]string) {
+		headers["Authentication"] = "Bearer " + token
+	}
+}
+
+func (s *RateLimiterTestSuite) Test_authenticated_api_request_count() {
+	s.T().Setenv("accessToken", "123")
+	headers := HttpHeaders(BearerToken(os.Getenv("accessToken")))
 	s.givenCreateOrderRequestCount(s.T(), headers, 4)
 
 	s.T().Run("below limit", func(t *testing.T) {
