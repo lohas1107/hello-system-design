@@ -5,7 +5,6 @@ import (
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/suite"
 	"net/http"
-	"os"
 	"testing"
 )
 
@@ -17,40 +16,23 @@ func TestRateLimiterTestSuite(t *testing.T) {
 	suite.Run(t, new(RateLimiterTestSuite))
 }
 
-type HttpHeaderOption func(map[string]string)
-
-func HttpHeaders(options ...HttpHeaderOption) map[string]string {
-	headers := map[string]string{}
-	for _, option := range options {
-		option(headers)
-	}
-	return headers
-}
-
-func BearerToken(token string) HttpHeaderOption {
-	return func(headers map[string]string) {
-		headers["Authentication"] = "Bearer " + token
-	}
-}
-
 func (s *RateLimiterTestSuite) Test_authenticated_api_request_count() {
 	s.T().Setenv("accessToken", "123")
-	headers := HttpHeaders(BearerToken(os.Getenv("accessToken")))
-	s.givenCreateOrderRequestCount(s.T(), headers, 4)
+	s.givenCreateOrderRequestCount(s.T(), 4)
 
 	s.T().Run("below limit", func(t *testing.T) {
-		response := api.CreateOrder(s.T(), headers)
+		response := api.CreateOrder(s.T())
 		s.statusShouldBe(response, http.StatusCreated)
 	})
 	s.T().Run("exceeds limit", func(t *testing.T) {
-		response := api.CreateOrder(s.T(), headers)
+		response := api.CreateOrder(s.T())
 		s.statusShouldBe(response, http.StatusTooManyRequests)
 	})
 }
 
-func (s *RateLimiterTestSuite) givenCreateOrderRequestCount(t *testing.T, headers map[string]string, count int) {
+func (s *RateLimiterTestSuite) givenCreateOrderRequestCount(t *testing.T, count int) {
 	for range count {
-		api.CreateOrder(t, headers).End()
+		api.CreateOrder(t).End()
 	}
 }
 

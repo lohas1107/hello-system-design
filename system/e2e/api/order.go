@@ -3,14 +3,17 @@ package api
 import (
 	"github.com/steinfletcher/apitest"
 	"order/pkg"
+	"os"
 	"testing"
 )
 
-func CreateOrder(t *testing.T, headers map[string]string) *apitest.Response {
+func CreateOrder(t *testing.T) *apitest.Response {
 	return apitest.New().Debug().
 		Handler(pkg.Router()).
 		Post("/v1/orders").
-		Headers(headers).
+		Headers(HttpHeaders(
+			BearerToken(os.Getenv("accessToken")),
+		)).
 		Expect(t)
 }
 
