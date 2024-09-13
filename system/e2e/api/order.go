@@ -1,9 +1,9 @@
 package api
 
 import (
+	"e2e/config"
 	"github.com/steinfletcher/apitest"
 	"order/pkg"
-	"os"
 	"testing"
 )
 
@@ -12,7 +12,7 @@ func CreateOrder(t *testing.T) *apitest.Response {
 		Handler(pkg.Router()).
 		Post("/v1/orders").
 		Headers(HttpHeaders(
-			BearerToken(os.Getenv("accessToken")),
+			BearerToken(config.AccessToken()),
 		)).
 		Expect(t)
 }

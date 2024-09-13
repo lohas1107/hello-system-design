@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"e2e/api"
+	"e2e/config"
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -17,7 +18,7 @@ func TestRateLimiterTestSuite(t *testing.T) {
 }
 
 func (s *RateLimiterTestSuite) Test_authenticated_api_request_count() {
-	s.T().Setenv("accessToken", "123")
+	config.SetAccessToken(s.T(), "123")
 	s.givenCreateOrderRequestCount(s.T(), 4)
 
 	s.T().Run("below limit", func(t *testing.T) {
