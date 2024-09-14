@@ -4,22 +4,35 @@ import (
 	"gateway/pkg/context"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
-var RateLimitMap = map[string]int8{}
+var RateLimitMap = map[string]int64{}
 
-func AuthenticatedApiRateLimiter(ctx *gin.Context) {
-	userID := context.UserID(ctx)
+func UserIdRateLimiter(c *gin.Context) {
+	userID := context.UserID(c)
 	RateLimitMap[userID] += 1
 	if RateLimitMap[userID] > 5 {
-		ctx.AbortWithStatus(http.StatusTooManyRequests)
+		c.AbortWithStatus(http.StatusTooManyRequests)
 	}
 }
 
-func UnauthenticatedApiRateLimiter(ctx *gin.Context) {
-	ip := context.ClientIp(ctx)
+func ClientIpRateLimiter(c *gin.Context) {
+	ip := context.ClientIp(c)
 	RateLimitMap[ip] += 1
 	if RateLimitMap[ip] > 5 {
-		ctx.AbortWithStatus(http.StatusTooManyRequests)
+		c.AbortWithStatus(http.StatusTooManyRequests)
+	}
+}
+
+func TimeRateLimiter(c *gin.Context) {
+	path := c.Request.URL.Path
+	last, exists := RateLimitMap[path]
+	now := time.Now().UTC().UnixMilli()
+	RateLimitMap[path] = now
+	if exists {
+		if now-last < 1e3 {
+			c.AbortWithStatus(http.StatusTooManyRequests)
+		}
 	}
 }
