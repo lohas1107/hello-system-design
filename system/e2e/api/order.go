@@ -1,7 +1,7 @@
 package api
 
 import (
-	"e2e/config"
+	"e2e/mock"
 	"gateway/pkg/io"
 	"gateway/pkg/router"
 	"github.com/steinfletcher/apitest"
@@ -13,7 +13,7 @@ func CreateOrder(t *testing.T) io.Response[*any] {
 		Handler(router.Order()).
 		Post("/v1/orders").
 		Headers(io.HttpHeaders(
-			io.BearerToken(config.AccessToken()),
+			io.BearerToken(mock.AccessToken()),
 		)).
 		Expect(t).
 		End()
@@ -26,7 +26,7 @@ func CreateOrderReport(t *testing.T) io.Response[*any] {
 		Handler(router.Order()).
 		Post("/v1/orders/reports").
 		Headers(io.HttpHeaders(
-			io.BearerToken(config.AccessToken()),
+			io.BearerToken(mock.AccessToken()),
 		)).
 		Expect(t).
 		End()

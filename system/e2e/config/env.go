@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"testing"
 )
 
 func Load() {
@@ -17,20 +16,4 @@ func Load() {
 
 	_ = godotenv.Load(path)
 	gin.SetMode(os.Getenv("GIN_MODE"))
-}
-
-func SetAccessToken(t *testing.T, value string) {
-	t.Setenv("accessToken", value)
-}
-
-func AccessToken() string {
-	return os.Getenv("accessToken")
-}
-
-func SetClientIp(t *testing.T, value string) {
-	t.Setenv("clientIp", value)
-}
-
-func ClientIp() string {
-	return os.Getenv("clientIp")
 }
