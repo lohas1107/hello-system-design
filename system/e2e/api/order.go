@@ -3,30 +3,37 @@ package api
 import (
 	"e2e/config"
 	"gateway/pkg/io"
+	"gateway/pkg/router"
 	"github.com/steinfletcher/apitest"
-	"order/pkg"
 	"testing"
 )
 
 func CreateOrder(t *testing.T) io.Response[*any] {
-	response := apitest.New().Debug().
-		Handler(pkg.Router()).
+	response := apitest.New().
+		Handler(router.Order()).
 		Post("/v1/orders").
 		Headers(io.HttpHeaders(
 			io.BearerToken(config.AccessToken()),
 		)).
 		Expect(t)
-	result := response.End()
+
 	return io.Response[*any]{
 		Response: response,
-		Result:   result,
+		Result:   response.End(),
 	}
 }
 
-func CreateOrderReport(t *testing.T) *apitest.Response {
-	return apitest.New().Debug().
-		Handler(pkg.Router()).
+func CreateOrderReport(t *testing.T) io.Response[*any] {
+	response := apitest.New().
+		Handler(router.Order()).
 		Post("/v1/orders/report").
-		Header("Authentication", "Bearer 456").
+		Headers(io.HttpHeaders(
+			io.BearerToken(config.AccessToken()),
+		)).
 		Expect(t)
+
+	return io.Response[*any]{
+		Response: response,
+		Result:   response.End(),
+	}
 }

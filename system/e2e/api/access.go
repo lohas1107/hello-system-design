@@ -13,11 +13,13 @@ func GivenUserLoggedIn(t *testing.T) {
 	config.SetAccessToken(t, accessToken)
 }
 
-var IdentityHandler = apitest.New().Handler(router.Router())
+func Login[T *io.LoginResponse](t *testing.T) io.Response[T] {
+	response := apitest.New().
+		Handler(router.Access()).
+		Post("/v1/login").
+		Expect(t)
 
-func Login(t *testing.T) io.Response[*io.LoginResponse] {
-	response := IdentityHandler.Post("/v1/login").Expect(t)
-	return io.Response[*io.LoginResponse]{
+	return io.Response[T]{
 		Response: response,
 		Result:   response.End(),
 	}

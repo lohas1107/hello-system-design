@@ -1,13 +1,27 @@
 package router
 
 import (
-	"access/pkg"
+	access "access/pkg"
+	"gateway/pkg/middleware"
 	"github.com/gin-gonic/gin"
+	order "order/pkg"
 )
 
-func Router() *gin.Engine {
+func Access() *gin.Engine {
 	engine := gin.Default()
-	v1 := engine.Group("v1")
-	v1.POST("/login", pkg.Login)
+	group := engine.Group("v1")
+
+	group.POST("/login", access.Login)
+	return engine
+}
+
+func Order() *gin.Engine {
+	engine := gin.Default()
+	group := engine.Group("v1")
+	group.Use(middleware.JwtAuth)
+	group.Use(middleware.AuthenticatedApiRateLimiter)
+
+	group.POST("/orders", order.CreateOrder)
+	group.POST("/orders/report", order.CreateOrderReport)
 	return engine
 }

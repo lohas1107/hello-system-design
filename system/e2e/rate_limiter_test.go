@@ -44,8 +44,8 @@ func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count_below_limi
 }
 
 func (s *RateLimiterTestSuite) Test_custom_api_request_count_below_limit() {
-	response := api.CreateOrderReport(s.T())
-	s.statusShouldBe(response, http.StatusAccepted)
+	actual := api.CreateOrderReport(s.T())
+	s.statusShouldBe(actual.Response, http.StatusAccepted)
 }
 
 func (s *RateLimiterTestSuite) statusShouldBe(response *apitest.Response, status int) {
