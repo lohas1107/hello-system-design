@@ -2,7 +2,7 @@ package api
 
 import (
 	"e2e/config"
-	io "gateway/pkg"
+	"gateway/pkg/io"
 	"github.com/steinfletcher/apitest"
 	"order/pkg"
 	"testing"
