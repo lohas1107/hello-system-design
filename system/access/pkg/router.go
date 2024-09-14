@@ -1,8 +1,8 @@
 package pkg
 
 import (
+	"access/internal/router"
 	"github.com/gin-gonic/gin"
-	"identity/internal/router"
 )
 
 func Router() *gin.Engine {

@@ -1,10 +1,10 @@
 package api
 
 import (
+	"access/pkg"
 	"e2e/config"
 	"encoding/json"
 	"github.com/steinfletcher/apitest"
-	"identity/pkg"
 	"io"
 	"testing"
 )
