@@ -1,12 +1,18 @@
 package api
 
 import (
+	"e2e/config"
 	"encoding/json"
 	"github.com/steinfletcher/apitest"
 	"identity/pkg"
 	"io"
 	"testing"
 )
+
+func GivenUserLoggedIn(t *testing.T) {
+	accessToken := (*Login(t).Data()).AccessToken
+	config.SetAccessToken(t, accessToken)
+}
 
 var IdentityHandler = apitest.New().Handler(pkg.Router())
 
