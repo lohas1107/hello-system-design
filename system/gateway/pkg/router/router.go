@@ -2,7 +2,7 @@ package router
 
 import (
 	access "access/pkg"
-	"gateway/pkg/middleware"
+	"gateway/internal/router/middleware"
 	"github.com/gin-gonic/gin"
 	order "order/pkg"
 )

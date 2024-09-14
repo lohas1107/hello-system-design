@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"gateway/pkg/context"
+	"gateway/internal/router/context"
 	"github.com/gin-gonic/gin"
 )
 

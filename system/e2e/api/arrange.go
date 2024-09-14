@@ -1,20 +1,20 @@
 package api
 
 import (
-	"e2e/mock"
-	"gateway/pkg/middleware"
+	env "e2e/mock"
+	"gateway/pkg/mock"
 	"testing"
 )
 
 func GivenUserLoggedIn(t *testing.T) {
 	accessToken := (*Login(t).Data()).AccessToken
-	mock.SetAccessToken(t, accessToken)
+	env.SetAccessToken(t, accessToken)
 }
 
 func GivenUserIp(t *testing.T, ip string) {
-	mock.SetClientIp(t, ip)
+	env.SetClientIp(t, ip)
 }
 
 func GivenLastRequestedAt(path string, requestedAt int64) {
-	middleware.RateLimitMap[path] = requestedAt
+	mock.SetRequestedAt(path, requestedAt)
 }
