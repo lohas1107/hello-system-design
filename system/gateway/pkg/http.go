@@ -1,4 +1,4 @@
-package api
+package pkg
 
 type HttpHeaderOption func(map[string]string)
 
