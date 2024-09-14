@@ -7,8 +7,7 @@ import (
 )
 
 type Response[T any] struct {
-	Response *apitest.Response
-	Result   apitest.Result
+	Result apitest.Result
 }
 
 func (r Response[T]) Data() (data T) {

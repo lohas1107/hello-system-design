@@ -15,3 +15,9 @@ func BearerToken(token string) HttpHeaderOption {
 		headers["Authentication"] = "Bearer " + token
 	}
 }
+
+func ClientIp(ip string) HttpHeaderOption {
+	return func(headers map[string]string) {
+		headers["HTTP_CLIENT_IP"] = ip
+	}
+}

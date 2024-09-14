@@ -9,31 +9,27 @@ import (
 )
 
 func CreateOrder(t *testing.T) io.Response[*any] {
-	response := apitest.New().
+	result := apitest.New().
 		Handler(router.Order()).
 		Post("/v1/orders").
 		Headers(io.HttpHeaders(
 			io.BearerToken(config.AccessToken()),
 		)).
-		Expect(t)
+		Expect(t).
+		End()
 
-	return io.Response[*any]{
-		Response: response,
-		Result:   response.End(),
-	}
+	return io.Response[*any]{Result: result}
 }
 
 func CreateOrderReport(t *testing.T) io.Response[*any] {
-	response := apitest.New().
+	result := apitest.New().
 		Handler(router.Order()).
-		Post("/v1/orders/report").
+		Post("/v1/orders/reports").
 		Headers(io.HttpHeaders(
 			io.BearerToken(config.AccessToken()),
 		)).
-		Expect(t)
+		Expect(t).
+		End()
 
-	return io.Response[*any]{
-		Response: response,
-		Result:   response.End(),
-	}
+	return io.Response[*any]{Result: result}
 }

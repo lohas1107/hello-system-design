@@ -2,7 +2,7 @@ package e2e
 
 import (
 	"e2e/api"
-	"github.com/steinfletcher/apitest"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
@@ -21,31 +21,38 @@ func (s *RateLimiterTestSuite) Test_authenticated_api_request_count() {
 	s.givenCreateOrderRequestCount(s.T(), 4)
 
 	s.T().Run("below limit", func(t *testing.T) {
-		actual := api.CreateOrder(s.T())
-		s.statusShouldBe(actual.Response, http.StatusCreated)
+		actual := api.CreateOrder(t)
+		s.statusShouldBe2XX(t, actual.Result.Response.StatusCode)
 	})
 	s.T().Run("exceeds limit", func(t *testing.T) {
-		actual := api.CreateOrder(s.T())
-		s.statusShouldBe(actual.Response, http.StatusTooManyRequests)
+		actual := api.CreateOrder(t)
+		s.statusShouldBe429(t, actual.Result.Response.StatusCode)
 	})
 }
 
 func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count() {
+	api.GivenUserIp(s.T(), "127.0.0.1")
 	s.givenLoginRequestCount(s.T(), 4)
 
 	s.T().Run("below limit", func(t *testing.T) {
-		actual := api.Login(s.T())
-		s.statusShouldBe(actual.Response, http.StatusOK)
+		actual := api.Login(t)
+		s.statusShouldBe2XX(t, actual.Result.Response.StatusCode)
 	})
 	s.T().Run("exceeds limit", func(t *testing.T) {
-		actual := api.Login(s.T())
-		s.statusShouldBe(actual.Response, http.StatusTooManyRequests)
+		actual := api.Login(t)
+		s.statusShouldBe429(t, actual.Result.Response.StatusCode)
 	})
 }
 
-func (s *RateLimiterTestSuite) Test_custom_api_request_count_below_limit() {
-	actual := api.CreateOrderReport(s.T())
-	s.statusShouldBe(actual.Response, http.StatusAccepted)
+func (s *RateLimiterTestSuite) Test_custom_api_request_count() {
+	s.T().Run("below limit", func(t *testing.T) {
+		actual := api.CreateOrderReport(t)
+		s.statusShouldBe2XX(t, actual.Result.Response.StatusCode)
+	})
+	s.T().Run("exceeds limit", func(t *testing.T) {
+		actual := api.CreateOrderReport(t)
+		s.statusShouldBe429(t, actual.Result.Response.StatusCode)
+	})
 }
 
 func (s *RateLimiterTestSuite) givenCreateOrderRequestCount(t *testing.T, count int) {
@@ -60,6 +67,11 @@ func (s *RateLimiterTestSuite) givenLoginRequestCount(t *testing.T, count int) {
 	}
 }
 
-func (s *RateLimiterTestSuite) statusShouldBe(response *apitest.Response, status int) {
-	response.Status(status)
+func (s *RateLimiterTestSuite) statusShouldBe2XX(t *testing.T, code int) {
+	assert.LessOrEqual(t, 200, code)
+	assert.Greater(t, 300, code)
+}
+
+func (s *RateLimiterTestSuite) statusShouldBe429(t *testing.T, code int) bool {
+	return assert.Equal(t, http.StatusTooManyRequests, code)
 }

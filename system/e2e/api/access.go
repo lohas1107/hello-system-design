@@ -13,14 +13,19 @@ func GivenUserLoggedIn(t *testing.T) {
 	config.SetAccessToken(t, accessToken)
 }
 
+func GivenUserIp(t *testing.T, ip string) {
+	config.SetClientIp(t, ip)
+}
+
 func Login[T *io.LoginResponse](t *testing.T) io.Response[T] {
-	response := apitest.New().
+	result := apitest.New().
 		Handler(router.Access()).
 		Post("/v1/login").
-		Expect(t)
+		Headers(io.HttpHeaders(
+			io.ClientIp(config.ClientIp()),
+		)).
+		Expect(t).
+		End()
 
-	return io.Response[T]{
-		Response: response,
-		Result:   response.End(),
-	}
+	return io.Response[T]{Result: result}
 }
