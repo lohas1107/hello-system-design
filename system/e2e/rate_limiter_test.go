@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
-	"time"
 )
 
 type RateLimiterTestSuite struct {
@@ -46,10 +45,6 @@ func (s *RateLimiterTestSuite) Test_unauthenticated_api_request_count() {
 }
 
 func (s *RateLimiterTestSuite) Test_custom_api_request_count() {
-	path := "/v1/orders/reports"
-	requestedAt := time.Now().Add(-time.Second).UTC().UnixMilli()
-	api.GivenLastRequestedAt(path, requestedAt)
-
 	s.T().Run("below limit", func(t *testing.T) {
 		actual := api.CreateOrderReport(t)
 		s.statusShouldBe2XX(t, actual.Result.Response.StatusCode)

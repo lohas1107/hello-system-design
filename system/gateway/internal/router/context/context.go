@@ -20,3 +20,17 @@ func SetUserID(ctx *gin.Context, token string) {
 func UserID(ctx *gin.Context) string {
 	return ctx.GetString("userId")
 }
+
+type Actor string
+
+type Operation struct {
+	Method string
+	Route  string
+}
+
+func RequestOperation(c *gin.Context) Operation {
+	return Operation{
+		Method: c.Request.Method,
+		Route:  c.Request.URL.Path,
+	}
+}

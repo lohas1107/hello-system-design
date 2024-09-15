@@ -9,10 +9,10 @@ import (
 
 func Access() *gin.Engine {
 	engine := gin.Default()
-	group := engine.Group("v1")
-	group.Use(middleware.ClientIpRateLimiter)
+	v1 := engine.Group("v1")
+	v1.Use(middleware.RateLimiter)
 
-	group.POST("/login", access.Login)
+	v1.POST("/login", access.Login)
 	return engine
 }
 
@@ -20,13 +20,9 @@ func Order() *gin.Engine {
 	engine := gin.Default()
 	v1 := engine.Group("v1")
 	v1.Use(middleware.JwtAuth)
+	v1.Use(middleware.RateLimiter)
 
-	orders := v1.Group("orders")
-	orders.Use(middleware.UserIdRateLimiter)
-	orders.POST("", order.CreateOrder)
-
-	reports := orders.Group("reports")
-	reports.Use(middleware.TimeRateLimiter)
-	reports.POST("", order.CreateOrderReport)
+	v1.POST("orders", order.CreateOrder)
+	v1.POST("orders/reports", order.CreateOrderReport)
 	return engine
 }
